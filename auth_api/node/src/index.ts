@@ -1,5 +1,4 @@
-import Config from './config/config.json';
-import ConfigType from './config/config';
+import Config, { ConfigType } from './config/config';
 import app from './server';
 
 let config: ConfigType = Config;

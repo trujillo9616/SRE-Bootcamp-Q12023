@@ -1,11 +1,9 @@
-import { Application } from 'express';
-import { login } from './login';
-import { protect } from './protected';
-import { health } from '../services/health';
+import loginRouter from './login';
+import protectedRouter from './protected';
+import healthRouter from './health';
 
-
-export const init = (app: Application) => {
-  app.post('/api/login', login);
-  app.get('/api/protected', protect);
-  app.get('/api/_health', health);
-};
+export {
+  loginRouter,
+  protectedRouter,
+  healthRouter,
+}

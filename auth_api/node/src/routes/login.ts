@@ -1,16 +1,24 @@
-import { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { loginFunction } from '../services/login';
 
-export const login = (req: Request, res: Response, next: NextFunction) => {
-  const { username, password } = req.body;
+const loginRouter = express.Router();
 
-  if (!username || !password) {
-    res.status(400).send({ error: 'Username and password are required' });
+loginRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(403).send({ error: 'Username and password are required' });
+    }
+
+    let response = {
+      "token": await loginFunction(username, password)
+    };
+
+    return res.send(response);
+  } catch (error) {
+    return next(error);
   }
+})
 
-  let response = {
-    "data": loginFunction(username, password)
-  };
-  res.send(response);
-  next();
-}
+export default loginRouter;

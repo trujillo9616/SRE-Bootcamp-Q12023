@@ -1,16 +1,24 @@
-import { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { protectFunction } from '../services/protected';
 
-export const protect = (req: Request, res: Response, next: NextFunction) => {
-  const authToken = req.header('Authorization')?.split(' ')[1];
+const protectedRouter = express.Router();
 
-  if (!authToken) {
-    return res.status(401).send({ error: 'Authorization header is required' });
+protectedRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const authToken = req.header('Authorization');
+    if (!authToken) {
+      return res.status(401).send({ error: 'Authorization header is required' });
+    }
+
+    const userData = protectFunction(authToken);
+    let response = {
+      "data": `You are under protected data, ${userData.username} with role ${userData.role}!`
+    };
+
+    return res.send(response);
+  } catch (error) {
+    return next(error);
   }
+});
 
-  let response = {
-    "data": protectFunction(authToken)
-  };
-  res.send(response);
-  return next();
-}
+export default protectedRouter;
